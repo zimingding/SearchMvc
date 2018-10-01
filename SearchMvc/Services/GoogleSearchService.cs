@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.Extensions.Options;
 using SearchMvc.Models;
 
 namespace SearchMvc.Services
@@ -11,11 +12,13 @@ namespace SearchMvc.Services
     {
         private IHttpClientWrapper _httpClientWrapper;
         private IMatchService _matchService;
+        private GoogleSearchOptions _searchOptions;
 
-        public GoogleSearchService(IHttpClientWrapper httpClientWrapper, IMatchService matchService)
+        public GoogleSearchService(IHttpClientWrapper httpClientWrapper, IMatchService matchService, IOptions<GoogleSearchOptions> googleSearchOptions)
         {
             _httpClientWrapper = httpClientWrapper;
             _matchService = matchService;
+            _searchOptions = googleSearchOptions.Value;
         }
         public async Task<int[]> Search(SearchRequest searchRequest)
         {
@@ -25,7 +28,7 @@ namespace SearchMvc.Services
             
             foreach (var keyword in searchKeywords)
             {
-                var requestUrl = $"https://www.google.com.au/search?q={HttpUtility.UrlEncode(keyword)}&num=10";
+                var requestUrl = $"{_searchOptions.SearchUrl}/search?q={HttpUtility.UrlEncode(keyword)}&num={_searchOptions.ResultSize}";
                 var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
                 var searchResult = await _httpClientWrapper.SendAsync(request);
                 
