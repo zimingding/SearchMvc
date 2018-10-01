@@ -26,7 +26,14 @@ namespace SearchMvc.Controllers
         [HttpPost]
         public IActionResult Index(SearchRequest searchRequest)
         {
-            return RedirectToAction(nameof(Result), new {keywords=searchRequest.Keywords, url=searchRequest.Url});
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Result), new { keywords = searchRequest.Keywords, url = searchRequest.Url });
+            }
+            else
+            {
+                return View();
+            }
         }
 
         public async Task<IActionResult> Result(string keywords, string url)

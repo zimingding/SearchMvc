@@ -10,10 +10,12 @@
         <div>
             <label asp-for="Keywords"></label>
             <input asp-for="Keywords" />
+            <span asp-validation-for="Keywords"></span>
         </div>
         <div>
             <label asp-for="Url"></label>
             <input asp-for="Url" />
+            <span asp-validation-for="Url"></span>
         </div>
         <input type="submit" name="search" value="Search" />
     </form>
