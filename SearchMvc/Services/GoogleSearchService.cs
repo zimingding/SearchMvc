@@ -11,11 +11,11 @@ namespace SearchMvc.Services
 {
     public class GoogleSearchService : ISearchService
     {
-        private IHttpClientFactory _clientFactory;
+        private IHttpClientWrapper _httpClientWrapper;
 
-        public GoogleSearchService(IHttpClientFactory clientFactory)
+        public GoogleSearchService(IHttpClientWrapper httpClientWrapper)
         {
-            _clientFactory = clientFactory;
+            _httpClientWrapper = httpClientWrapper;
         }
         public async Task<int[]> Search(SearchRequest searchRequest)
         {
@@ -27,8 +27,7 @@ namespace SearchMvc.Services
             {
                 var requestUrl = $"https://www.google.com.au/search?q={HttpUtility.UrlEncode(keyword)}&num=100";
                 var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-                var client = _clientFactory.CreateClient();
-                var response = await client.SendAsync(request);
+                var response = await _httpClientWrapper.SendAsync(request);
                 if (response.IsSuccessStatusCode)
                 {
                     var googleResult = await response.Content.ReadAsStringAsync();
