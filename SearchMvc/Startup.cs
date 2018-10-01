@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SearchMvc.Middleware;
 using SearchMvc.Models;
 using SearchMvc.Services;
 
@@ -38,6 +39,8 @@ namespace SearchMvc
             }
             
             app.UseStaticFiles();
+
+            app.UseNodeModules(env.ContentRootPath);
 
             app.UseMvc(ConfigureRoute);
 
