@@ -1,5 +1,5 @@
-using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Moq;
 using SearchMvc.Models;
 using SearchMvc.Services;
@@ -10,20 +10,29 @@ namespace SearchMvc.Tests
     public class GoogleSearchServiceTest
     {
         [Fact]
-        public void Test1()
+        public async Task should_call_httpclient_and_matchservice_and_return_result()
         {
+            // Arrange
             var mockHttpClientWrapper = new Mock<IHttpClientWrapper>();
-            var sut = new GoogleSearchService(mockHttpClientWrapper.Object);
+            mockHttpClientWrapper.Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>())).ReturnsAsync("search result");
+            var mockMatchService = new Mock<IMatchService>();
+            mockMatchService.Setup(x => x.Count(It.IsAny<string>(), It.IsAny<string>())).Returns(1);
+
+            var sut = new GoogleSearchService(mockHttpClientWrapper.Object, mockMatchService.Object);
             var request = new SearchRequest
             {
-                Keywords = "online title search, e-settlement",
+                Keywords = "online title search",
                 Url = "www.sympli.com.au"
             };
 
             // Act
-            sut.Search(request);
+            var result = await sut.Search(request);
 
+            // Assert
             mockHttpClientWrapper.Verify(x => x.SendAsync(It.IsAny<HttpRequestMessage>()), Times.Once);
+            mockMatchService.Verify(x => x.Count("search result", request.Url), Times.Once);
+            Assert.Equal(result.Length, 1);
+            Assert.Equal(result[0], 1);
         }
     }
 }

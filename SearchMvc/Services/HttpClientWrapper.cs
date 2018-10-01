@@ -16,9 +16,12 @@ namespace SearchMvc.Services
             };
         }
 
-        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
+        public async Task<string> SendAsync(HttpRequestMessage request)
         {
-            return await HttpClient.SendAsync(request);
+            var response = await HttpClient.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadAsStringAsync();
+            return string.Empty;
         }
     }
 }

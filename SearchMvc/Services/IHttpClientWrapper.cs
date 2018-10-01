@@ -5,6 +5,6 @@ namespace SearchMvc.Services
 {
     public interface IHttpClientWrapper
     {
-        Task<HttpResponseMessage> SendAsync(HttpRequestMessage request);
+        Task<string> SendAsync(HttpRequestMessage request);
     }
 }

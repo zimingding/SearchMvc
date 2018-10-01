@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using SearchMvc.Models;
@@ -12,10 +10,12 @@ namespace SearchMvc.Services
     public class GoogleSearchService : ISearchService
     {
         private IHttpClientWrapper _httpClientWrapper;
+        private IMatchService _matchService;
 
-        public GoogleSearchService(IHttpClientWrapper httpClientWrapper)
+        public GoogleSearchService(IHttpClientWrapper httpClientWrapper, IMatchService matchService)
         {
             _httpClientWrapper = httpClientWrapper;
+            _matchService = matchService;
         }
         public async Task<int[]> Search(SearchRequest searchRequest)
         {
@@ -25,23 +25,14 @@ namespace SearchMvc.Services
             
             foreach (var keyword in searchKeywords)
             {
-                var requestUrl = $"https://www.google.com.au/search?q={HttpUtility.UrlEncode(keyword)}&num=100";
+                var requestUrl = $"https://www.google.com.au/search?q={HttpUtility.UrlEncode(keyword)}&num=10";
                 var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-                var response = await _httpClientWrapper.SendAsync(request);
-                if (response.IsSuccessStatusCode)
-                {
-                    var googleResult = await response.Content.ReadAsStringAsync();
-                    results.Add(CalculateMatch(googleResult, searchRequest.Url));
-                }
+                var searchResult = await _httpClientWrapper.SendAsync(request);
+                
+                results.Add(_matchService.Count(searchResult, searchRequest.Url));
             }
 
             return results.ToArray();
-        }
-
-        private int CalculateMatch(string result, string url)
-        {
-            var groups = Regex.Matches(result, @"<cite>(.*?)</cite>");
-            return groups.Count(g => g.Value.Contains(url));
         }
     }
 }

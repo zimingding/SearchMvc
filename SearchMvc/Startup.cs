@@ -20,6 +20,7 @@ namespace SearchMvc
             services.AddScoped<ISearchService, GoogleSearchService>();
             services.AddMvc();
             services.AddSingleton<IHttpClientWrapper, HttpClientWrapper>();
+            services.AddScoped<IMatchService, MatchService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
