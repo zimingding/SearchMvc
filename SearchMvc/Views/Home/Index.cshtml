@@ -1,0 +1,21 @@
+﻿@model SearchMvc.Models.SearchRequest
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <h1>Search MVC</h1>
+    <form action="/" method="post">
+        <div>
+            <label asp-for="Keywords"></label>
+            <input asp-for="Keywords" />
+        </div>
+        <div>
+            <label asp-for="Url"></label>
+            <input asp-for="Url" />
+        </div>
+        <input type="submit" name="search" value="Search" />
+    </form>
+</body>
+</html>
